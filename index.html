@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signals</title>
+
+    <style>
+      * {
+        border-box: box-sizing;
+        min-width: 0;
+      }
+
+      html {
+        font-size: 125%;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>An implementation of signals in JS</h1>
+
+    <div id="app"></div>
+
+    <script type="module">
+      import { createSignal, createEffect, createDerived } from "./signal.mjs";
+
+      const [signal, setSignal] = createSignal(0);
+      const timesTwo = createDerived([signal], (value) => value * 2);
+
+      const app = document.getElementById("app");
+
+      const signalDisplay = document.createElement("p");
+      const timesTwoDisplay = document.createElement("p");
+
+      const incrementButton = document.createElement("button");
+      incrementButton.textContent = "Increment";
+      incrementButton.onclick = () => {
+        setSignal(signal() + 1);
+      };
+
+      createEffect(() => {
+        signalDisplay.textContent = signal();
+      });
+
+      createEffect(() => {
+        timesTwoDisplay.textContent = timesTwo();
+      });
+
+      app.appendChild(signalDisplay);
+      app.appendChild(timesTwoDisplay);
+      app.appendChild(incrementButton);
+    </script>
+  </body>
+</html>
