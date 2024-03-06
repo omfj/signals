@@ -1,8 +1,8 @@
 let currentEffect = null;
 
-export function createSignal(initialValue) {
+export const createSignal = (initialValue) => {
   let value = initialValue;
-  const observers = new Set(); // Use a Set to automatically handle unique subscription
+  const observers = new Set();
 
   const getter = () => {
     if (currentEffect) observers.add(currentEffect);
@@ -17,9 +17,9 @@ export function createSignal(initialValue) {
   };
 
   return [getter, setter];
-}
+};
 
-export function createEffect(fn) {
+export const createEffect = (fn) => {
   const run = () => {
     currentEffect = run;
     fn();
@@ -27,13 +27,13 @@ export function createEffect(fn) {
   };
 
   run();
-}
+};
 
-export function createDerived(signals, fn) {
+export const createDerived = (signals, fn) => {
   const [getter, setter] = createSignal();
   createEffect(() => {
-    const value = fn(signals.map((signal) => signal()));
+    const value = fn(...signals.map((signal) => signal()));
     setter(value);
   });
   return getter;
-}
+};

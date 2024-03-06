@@ -29,31 +29,61 @@
     <script type="module">
       import { createSignal, createEffect, createDerived } from "./signal.mjs";
 
-      const [signal, setSignal] = createSignal(0);
-      const timesTwo = createDerived([signal], (value) => value * 2);
+      const [count, setCount] = createSignal(0);
+      const countTimesTwo = createDerived([count], (count) => count * 2);
+      const [mousePos, setMousePos] = createSignal({ x: 0, y: 0 });
+      const countTimesTwoPlusCount = createDerived(
+        [count, countTimesTwo],
+        (count, countTimesTwo) => count + countTimesTwo
+      );
 
       const app = document.getElementById("app");
 
       const signalDisplay = document.createElement("p");
-      const timesTwoDisplay = document.createElement("p");
+      const countTimesTwoDisplay = document.createElement("p");
+      const mousePosDisplay = document.createElement("p");
+      const countTimesTwoPlusCountDisplay = document.createElement("p");
+
+      window.addEventListener("mousemove", (event) => {
+        setMousePos({ x: event.clientX, y: event.clientY });
+      });
 
       const incrementButton = document.createElement("button");
       incrementButton.textContent = "Increment";
-      incrementButton.onclick = () => {
-        setSignal(signal() + 1);
-      };
+      incrementButton.addEventListener("click", () => {
+        setCount(count() + 1);
+      });
 
-      createEffect(() => {
-        signalDisplay.textContent = signal();
+      const decrementButton = document.createElement("button");
+      decrementButton.textContent = "Decrement";
+      decrementButton.addEventListener("click", () => {
+        setCount(count() - 1);
       });
 
       createEffect(() => {
-        timesTwoDisplay.textContent = timesTwo();
+        signalDisplay.textContent = `Count: ${count()}`;
+      });
+
+      createEffect(() => {
+        countTimesTwoDisplay.textContent = `Count times two: ${countTimesTwo()}`;
+      });
+
+      createEffect(() => {
+        mousePosDisplay.textContent = `x: ${mousePos().x}, y: ${mousePos().y}`;
+      });
+
+      createEffect(() => {
+        countTimesTwoPlusCountDisplay.textContent = `Count times two plus count: ${countTimesTwoPlusCount()}`;
       });
 
       app.appendChild(signalDisplay);
-      app.appendChild(timesTwoDisplay);
+      app.appendChild(countTimesTwoDisplay);
+      app.appendChild(countTimesTwoPlusCountDisplay);
+
       app.appendChild(incrementButton);
+      app.appendChild(decrementButton);
+
+      app.appendChild(mousePosDisplay);
     </script>
   </body>
 </html>
